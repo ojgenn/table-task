@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
-import Rows from './Rows';
+import ContentEditable from 'react-contenteditable';
+import { SelectableGroup, createSelectable } from 'react-selectable';
 import '../App.css';
+
+const SelectableComponent = createSelectable(ContentEditable);
 
 export default class Table extends Component {
   state = {
@@ -36,14 +39,20 @@ export default class Table extends Component {
   }
 
   render() {
-    let rows = this.state.tableArray.map((item, index) => {
-      return (
-        <Rows key={index} data={item} row={index} setRowColIndex={this.setRowColIndex} onChange={this.handleChange}/>
-      )
-    });
     return (
       <tbody>
-      {rows}
+      {this.state.tableArray.map((row, rowIndex) => (
+        <tr key = {rowIndex}>
+          {row.map((item, index) => (
+          <ContentEditable key = {index} html={item} // innerHTML of the editable div
+                           disabled={false}       // use true to disable edition
+                           onChange={this.handleChange}
+                           tagName = 'td'
+                           onFocus = {() => {this.setRowColIndex(rowIndex, index)}}
+                           onBlur =  {() => {this.setRowColIndex(null, null)}} />
+        ))}
+        </tr>
+        ))}
       </tbody>
     )
   }
