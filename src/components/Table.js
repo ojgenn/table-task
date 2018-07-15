@@ -14,14 +14,15 @@ export default class Table extends Component {
   };
 
   handleChange = e => {
-    console.log(e.target.value);
     let table = [...this.state.tableArray];
     table[this.state.row][this.state.col] = e.target.value;
     this.setState({tableArray: table})
   };
 
-  setRowColIndex = (row, col) => {
-    this.setState({row, col}, function () {
+  setRowColIndex = (row, col, clear = false) => {
+    console.log(clear);
+    let selectedKeys = clear? []: [...this.state.selectedKeys]
+    this.setState({row, col, selectedKeys}, function () {
       if (row !== null && col !== null) console.log(this.state.tableArray[row][col])
     })
   };
@@ -59,7 +60,7 @@ export default class Table extends Component {
   render() {
     return (
       <div>
-        <SelectableGroup onSelection={this.handleSelection.bind(this)}>
+        <SelectableGroup onSelection={this.handleSelection.bind(this)} preventDefault = {false}>
           <table>
             <tbody>
             {this.state.tableArray.map((row, rowIndex) => (
@@ -75,7 +76,8 @@ export default class Table extends Component {
                                          onChange={this.handleChange}
                                          tagName='td'
                                          onFocus={() => {
-                                           this.setRowColIndex(rowIndex, index)
+                                           let clear = true;
+                                           this.setRowColIndex(rowIndex, index, clear)
                                          }}
                                          onBlur={() => {
                                            this.setRowColIndex(null, null)
