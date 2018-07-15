@@ -26,9 +26,22 @@ export default class Table extends Component {
     })
   };
 
-  handleSelection (selectedKeys) {
-    this.setState({ selectedKeys });
+  handleSelection(selectedKeys) {
+    this.setState({selectedKeys});
   };
+
+  clearSelected() {
+    if (this.state.selectedKeys.length > 0) {
+      let newState = [...this.state.tableArray];
+      this.state.selectedKeys.forEach(item => {
+        let itemArray = item.split('_');
+        let row = Number(itemArray[0]);
+        let col = Number(itemArray[1]);
+        newState[row][col] = ''
+      });
+      this.setState({tableArray: newState, selectedKeys: []})
+    }
+  }
 
   componentDidMount() {
     const TABLE_ARRAY = [];
@@ -45,28 +58,39 @@ export default class Table extends Component {
 
   render() {
     return (
-      <SelectableGroup onSelection={this.handleSelection.bind(this)} component = {'tbody'}>
-        {this.state.tableArray.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((item, index) => {
-              let selected = this.state.selectedKeys.indexOf(rowIndex + '_' + index) > -1;
-              return (
-              <SelectableComponent key={index} html={item} // innerHTML of the editable div
-                               disabled={false}       // use true to disable edition
-                               selected={selected}
-                               selectableKey={rowIndex + '_' + index}
-                               onChange={this.handleChange}
-                               tagName='td'
-                               onFocus={() => {
-                                 this.setRowColIndex(rowIndex, index)
-                               }}
-                               onBlur={() => {
-                                 this.setRowColIndex(null, null)
-                               }}/>
-            )})}
-          </tr>
-        ))}
-      </SelectableGroup>
+      <div>
+        <SelectableGroup onSelection={this.handleSelection.bind(this)}>
+          <table>
+            <tbody>
+            {this.state.tableArray.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.map((item, index) => {
+                  let selected = this.state.selectedKeys.indexOf(rowIndex + '_' + index) > -1;
+                  return (
+                    <SelectableComponent key={index} html={item} // innerHTML of the editable div
+                                         disabled={false}       // use true to disable edition
+                                         selected={selected}
+                                         className={selected ? 'item-selected' : ''}
+                                         selectableKey={rowIndex + '_' + index}
+                                         onChange={this.handleChange}
+                                         tagName='td'
+                                         onFocus={() => {
+                                           this.setRowColIndex(rowIndex, index)
+                                         }}
+                                         onBlur={() => {
+                                           this.setRowColIndex(null, null)
+                                         }}/>
+                  )
+                })}
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </SelectableGroup>
+        <button onClick={this.clearSelected.bind(this)} className={'button'}>
+          Clear selected
+        </button>
+      </div>
     )
   }
 };
