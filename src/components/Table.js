@@ -20,11 +20,8 @@ export default class Table extends Component {
   };
 
   setRowColIndex = (row, col, clear = false) => {
-    console.log(clear);
     let selectedKeys = clear? []: [...this.state.selectedKeys]
-    this.setState({row, col, selectedKeys}, function () {
-      if (row !== null && col !== null) console.log(this.state.tableArray[row][col])
-    })
+    this.setState({row, col, selectedKeys})
   };
 
   handleSelection(selectedKeys) {
